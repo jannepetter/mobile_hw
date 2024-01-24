@@ -41,76 +41,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import java.security.AccessController
 
-class Person(
-    val name:String,
-    val email:String
-){}
-val contactPersons = listOf(
-    Person("John","john@john.org"),
-    Person("Elise","elise@elise.org"),
-    Person("Michael","michael@michael.org"),
-    Person("Kathy","kathy@kathy.org"),
-    Person("Ann","ann@ann.org"),
-    )
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
-                Column(
-                    horizontalAlignment = Alignment.Start,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(15.dp)
-                ) {
-                  Text(
-                      text = "Main app",
-                      fontSize = 40.sp,
-                      fontWeight = FontWeight.Bold
-                  )
-                LazyColumn(
-                    content = {
-                    items(20){i ->
-                        val person = contactPersons[i % contactPersons.size]
-                        Contact(
-                            name = person.name, email = person.email )
-                    }
-
-                })
-                }
+                Navigation()
             }
         }
     }
 }
 
-@Composable
-fun Contact(name:String,email:String){
-    var clicked by remember {
-        mutableStateOf(false)
-    }
-    Row(
-        modifier = Modifier.padding(vertical = 5.dp)
-    ){
-        Image(
-            painter = painterResource(
-            id = R.drawable.banana_dolphin
-        ), contentDescription = "content",
-            modifier = Modifier
-                .width(150.dp)
-                .clickable {
-                    clicked = !clicked
-                }.clip(CircleShape)
-        )
-        Column {
-            Text(text = name)
-            if(clicked){
-                Text(text = "Email: $email", fontWeight = FontWeight.Bold)
-            }
-        }
-    }
-}
+
 
 
 
