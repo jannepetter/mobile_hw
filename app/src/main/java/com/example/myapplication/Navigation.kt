@@ -6,19 +6,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.data.ContactViewModel
 
 
 @Composable
-fun Navigation(){
+fun Navigation(viewModel: ContactViewModel) {
     val navController = rememberNavController()
     Column {
         Row{
@@ -56,10 +53,16 @@ fun Navigation(){
                 HomeScreen(navController)
             }
             composable(route="contact_screen"){
-                ContactsScreen(navController)
+                ContactsScreen(navController,viewModel)
             }
             composable(route="note_screen"){
                 NoteScreen(navController)
+            }
+            composable(route="new_contact_screen"){
+                NewContactScreen(navController,viewModel)
+            }
+            composable(route="contact_detail/{contactId}"){it->
+                ContactDetail(navController, viewModel)
             }
         }
 

@@ -1,8 +1,8 @@
 package com.example.myapplication
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,22 +25,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavHostController
+import com.example.myapplication.data.Contact
+import com.example.myapplication.data.ContactState
+import com.example.myapplication.data.ContactViewModel
+import kotlinx.coroutines.flow.update
 
 
-class Person(
-    val name:String,
-    val email:String
-){}
-val contactPersons = listOf(
-    Person("John","john@john.org"),
-    Person("Elise","elise@elise.org"),
-    Person("Michael","michael@michael.org"),
-    Person("Kathy","kathy@kathy.org"),
-    Person("Ann","ann@ann.org"),
-)
 @Composable
-fun ContactsScreen(navController: NavHostController) {
+fun ContactsScreen(navController: NavHostController, viewModel: ContactViewModel) {
+
+        val contacts = viewModel.state.collectAsState().value.contacts
+
         Column(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
@@ -50,12 +49,15 @@ fun ContactsScreen(navController: NavHostController) {
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold
             )
+            Button(onClick = {
+                navController.navigate("new_contact_screen")
+            }) {
+                Text(text = "Add Contact")
+            }
             LazyColumn(
                 content = {
-                    items(20){i ->
-                        val person = contactPersons[i % contactPersons.size]
-                        Contact(
-                            name = person.name, email = person.email )
+                    items(contacts.size){i ->
+                        ContactItem(contacts[i],navController,viewModel)
                     }
 
                 })
@@ -63,29 +65,53 @@ fun ContactsScreen(navController: NavHostController) {
     }
 
 @Composable
-fun Contact(name:String,email:String){
+fun ContactItem(contact: Contact,navController: NavHostController,viewModel: ContactViewModel){
+    Log.d("image homma---",R.drawable.banana_dolphin.toString())
+    Log.d("contant image---",contact.image.toString())
     var clicked by remember {
         mutableStateOf(false)
     }
     Row(
         modifier = Modifier.padding(vertical = 5.dp)
     ){
-        Image(
-            painter = painterResource(
-                id = R.drawable.banana_dolphin
-            ), contentDescription = "content",
-            modifier = Modifier
-                .width(150.dp)
-                .clickable {
-                    clicked = !clicked
-                }
-                .clip(CircleShape)
-        )
+        if (contact.image == 0){
+            Image(
+                painter = painterResource(
+                    id = R.drawable.monkey
+                ), contentDescription = "content",
+                modifier = Modifier
+                    .width(150.dp)
+                    .clickable {
+                        clicked = !clicked
+                    }
+                    .clip(CircleShape)
+            )
+        }else{
+            Image(
+                painter = painterResource(
+                    id = contact.image
+                ), contentDescription = "content",
+                modifier = Modifier
+                    .width(150.dp)
+                    .clickable {
+                        clicked = !clicked
+                    }
+                    .clip(CircleShape)
+            )
+        }
         Column {
-            Text(text = name)
+            Text(text = contact.name)
             if(clicked){
-                Text(text = "Email: $email", fontWeight = FontWeight.Bold)
+                Text(text = "Email: ${contact.email}", fontWeight = FontWeight.Bold)
+                Button(onClick = {
+                    viewModel.updateContactDetail(contact)
+                    val idStr = contact.id.toString()
+                    navController.navigate("contact_detail/$idStr")
+                }) {
+                    Text(text = "Inspect")
+                }
             }
+
         }
     }
 }
