@@ -66,8 +66,6 @@ fun ContactsScreen(navController: NavHostController, viewModel: ContactViewModel
 
 @Composable
 fun ContactItem(contact: Contact,navController: NavHostController,viewModel: ContactViewModel){
-    Log.d("image homma---",R.drawable.banana_dolphin.toString())
-    Log.d("contant image---",contact.image.toString())
     var clicked by remember {
         mutableStateOf(false)
     }

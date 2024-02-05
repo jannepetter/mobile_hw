@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -15,7 +16,10 @@ import com.example.myapplication.data.ContactViewModel
 
 
 @Composable
-fun Navigation(viewModel: ContactViewModel) {
+fun Navigation(
+    viewModel: ContactViewModel,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+) {
     val navController = rememberNavController()
     Column {
         Row{
@@ -50,7 +54,7 @@ fun Navigation(viewModel: ContactViewModel) {
         }
         NavHost(navController = navController, startDestination = "home_screen"){
             composable(route="home_screen"){
-                HomeScreen(navController)
+                HomeScreen(navController,permissionLauncher)
             }
             composable(route="contact_screen"){
                 ContactsScreen(navController,viewModel)
