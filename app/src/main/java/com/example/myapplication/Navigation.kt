@@ -13,11 +13,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.data.ContactViewModel
+import com.example.myapplication.data.NoteViewModel
 
 
 @Composable
 fun Navigation(
     viewModel: ContactViewModel,
+    noteViewModel: NoteViewModel,
     permissionLauncher: ManagedActivityResultLauncher<String, Boolean>
 ) {
     val navController = rememberNavController()
@@ -60,7 +62,7 @@ fun Navigation(
                 ContactsScreen(navController,viewModel)
             }
             composable(route="note_screen"){
-                NoteScreen(navController)
+                NoteScreen(navController,noteViewModel)
             }
             composable(route="new_contact_screen"){
                 NewContactScreen(navController,viewModel)

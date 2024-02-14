@@ -5,9 +5,13 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [Contact::class],
-    version=2
+    entities = [
+        Contact::class,
+        Note::class,
+               ],
+    version=3
 )
 abstract class MyDatabase: RoomDatabase() {
     abstract val contactDao : ContactDao
+    abstract val noteDao : NoteDao
 }

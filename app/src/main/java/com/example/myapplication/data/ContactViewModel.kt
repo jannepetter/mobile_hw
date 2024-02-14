@@ -86,73 +86,8 @@ class ContactViewModel(
                         contactDao.upsertContact(contact)
                     }
                 }
-//                _state.update {
-//                    it.copy(
-//                        name = mutableStateOf(""),
-//                        email = mutableStateOf(""),
-//                        phone = mutableStateOf("")
-//                    )
-//                }
             }
         }
     }
 
 }
-
-
-
-//class ContactViewModel(
-//    private val contactDao: ContactDao
-//): ViewModel() {
-//
-//    private val isSortByNameAdded = MutableStateFlow(true)
-//    private var contacts =
-//        isSortByNameAdded.flatMapLatest { sort ->
-//        if (sort){
-//            contactDao.getContactsOrderedByName()
-//        }else{
-//            contactDao.getContactsOrderedByName()
-//        }
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-//    val _state = MutableStateFlow(ContactState())
-//
-//    val state = combine(_state,isSortByNameAdded,contacts){ state, isSortByNameAdded, contacts ->
-//        state.copy(
-//            contacts = contacts
-//        )
-//
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ContactState())
-//    fun onEvent(event: ContactEvent){
-//        when (event){
-//            is ContactEvent.DeleteContact -> {
-//                viewModelScope.launch {
-//                    contactDao.deleteContact(event.contact)
-//                }
-//            }
-//            is ContactEvent.SaveContact -> {
-//                val contact = Contact(
-//                    state.value.name.value,
-//                    state.value.email.value,
-//                    state.value.phone.value,
-//                )
-//                viewModelScope.launch {
-//                    contactDao.upsertContact(contact)
-//                }
-//                _state.update {
-//                    it.copy(
-//                        name = mutableStateOf(""),
-//                        email = mutableStateOf(""),
-//                        phone = mutableStateOf("")
-//                    )
-//                }
-//            }
-//            is ContactEvent.SortContacts -> {
-//                viewModelScope.launch {
-//                    contactDao.getContactsOrderedByName()
-//                }
-//
-//            }
-//        }
-//    }
-//
-//}

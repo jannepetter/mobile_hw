@@ -43,6 +43,8 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.myapplication.data.NoteViewModel
 
 class MainActivity : ComponentActivity() {
     fun postNotification(){
@@ -78,9 +80,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     )
+    private val noteViewModel by viewModels<NoteViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory{
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return NoteViewModel(database.noteDao) as T
+                }
+            }
+        }
+    )
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply{
+
+        }
         setContent {
             MyApplicationTheme {
                 val context = LocalContext.current
@@ -107,10 +121,68 @@ class MainActivity : ComponentActivity() {
                         onResult = {isGranted -> hasNotificationPermission = isGranted}
                     )
                     TemperatureSensor{postNotification()}
-                    Navigation(viewModel,permissionLauncher)
+                    HumiditySensor()
+                    Navigation(
+                        viewModel,
+                        noteViewModel,
+                        permissionLauncher)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun HumiditySensor() {
+    val registered = remember {
+        mutableStateOf(false)
+    }
+    val ctx = LocalContext.current
+    val sensorManager: SensorManager = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val ambientTemperatureSensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY)
+
+    val sensorStatus = remember {
+        mutableFloatStateOf(0.0F)
+    }
+    val humiditySensorEventListener = object : SensorEventListener {
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+            // method to check accuracy changed in sensor.
+        }
+
+        override fun onSensorChanged(event: SensorEvent) {
+
+            if (event.sensor.type == Sensor.TYPE_RELATIVE_HUMIDITY) {
+
+                sensorStatus.floatValue = event.values[0]
+            }
+        }
+    }
+    if (!registered.value){
+        sensorManager.registerListener(
+            humiditySensorEventListener,
+            ambientTemperatureSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+        registered.value = true
+    }
+
+    Row(
+        modifier = Modifier.padding(20.dp)
+    ) {
+        Text(
+            text = "Humidity ",
+            color = Color.Black,
+        )
+
+        Text(
+            text = sensorStatus.floatValue.toString(),
+            color = Color.Black,
+        )
+
+        Text(
+            text = " %",
+            color = Color.Black,
+        )
     }
 }
 
